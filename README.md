@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="https://raw.githubusercontent.com/MedOussamaBraiek/learn-german/main/public/og-image.png" alt="Learn Loughat" width="600" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Learn%20Loughat-🦉-brightgreen?style=for-the-badge" alt="Learn Loughat" />
 </p>
 
