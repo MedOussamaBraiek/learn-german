@@ -4,9 +4,10 @@ import { LanguageProvider, useLang } from './i18n/LanguageContext';
 import { LevelSelect } from './components/LevelSelect';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
+import { FlashcardStudy } from './components/FlashcardStudy';
 import './App.css';
 
-type Screen = 'levels' | 'quiz' | 'results';
+type Screen = 'levels' | 'study' | 'quiz' | 'results';
 
 const rtlLangs = new Set(['ar']);
 
@@ -20,6 +21,15 @@ function AppContent() {
 
   const handleLevelSelect = (l: Level) => {
     setLevel(l);
+    setScreen('quiz');
+  };
+
+  const handleStudy = (l: Level) => {
+    setLevel(l);
+    setScreen('study');
+  };
+
+  const handleStudyDone = () => {
     setScreen('quiz');
   };
 
@@ -40,7 +50,10 @@ function AppContent() {
   return (
     <div className="app-container" dir={rtlLangs.has(lang) ? 'rtl' : 'ltr'}>
       {screen === 'levels' && (
-        <LevelSelect onSelect={handleLevelSelect} learnLang={learnLang} onLearnLangChange={setLearnLang} />
+        <LevelSelect onSelect={handleLevelSelect} onStudy={handleStudy} learnLang={learnLang} onLearnLangChange={setLearnLang} />
+      )}
+      {screen === 'study' && (
+        <FlashcardStudy learnLang={learnLang} level={level} onStartQuiz={handleStudyDone} onBack={handleBackToLevels} />
       )}
       {screen === 'quiz' && (
         <Quiz level={level} learnLang={learnLang} onComplete={handleQuizComplete} onBack={handleBackToLevels} />

@@ -6,6 +6,7 @@ import { LearnLangSelector } from './LearnLangSelector';
 
 interface LevelSelectProps {
   onSelect: (level: Level) => void;
+  onStudy: (level: Level) => void;
   learnLang: LearnLanguage;
   onLearnLangChange: (lang: LearnLanguage) => void;
 }
@@ -24,7 +25,7 @@ const levelDescKey: Record<string, string> = {
   B2: 'level.desc.b2',
 };
 
-export function LevelSelect({ onSelect, learnLang, onLearnLangChange }: LevelSelectProps) {
+export function LevelSelect({ onSelect, onStudy, learnLang, onLearnLangChange }: LevelSelectProps) {
   const { t } = useLang();
 
   return (
@@ -36,7 +37,17 @@ export function LevelSelect({ onSelect, learnLang, onLearnLangChange }: LevelSel
         <p className="app-subtitle">{t('app.subtitle')}</p>
       </div>
       <LearnLangSelector value={learnLang} onChange={onLearnLangChange} />
-      <div className="level-cards" style={{ marginTop: 32 }}>
+      <div className="study-prompt">
+        <span className="study-prompt-text">📚 Study before the quiz</span>
+        <div className="study-prompt-levels">
+          {levels.map((lev) => (
+            <button key={lev.label} className="study-pill" style={{ '--level-color': lev.color } as React.CSSProperties} onClick={() => onStudy(lev.label)}>
+              {lev.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="level-cards" style={{ marginTop: 20 }}>
         {levels.map((level) => (
           <button
             key={level.label}
@@ -47,7 +58,7 @@ export function LevelSelect({ onSelect, learnLang, onLearnLangChange }: LevelSel
             <span className="level-badge">{level.label}</span>
             <span className="level-name">{t(levelNameKey[level.label] as any)}</span>
             <span className="level-desc">{t(levelDescKey[level.label] as any)}</span>
-            <span className="level-arrow">→</span>
+            <span className="level-arrow">→ Start Quiz</span>
           </button>
         ))}
       </div>

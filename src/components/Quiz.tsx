@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import type { Question, Answer, Level, LearnLanguage } from '../types';
 import { getRandomQuestions } from '../data/questions';
 import { useLang } from '../i18n/LanguageContext';
+import { useTTS } from '../hooks/useTTS';
 
 interface QuizProps {
   level: Level;
@@ -12,6 +13,7 @@ interface QuizProps {
 
 export function Quiz({ level, learnLang, onComplete, onBack }: QuizProps) {
   const { t } = useLang();
+  const { speak } = useTTS();
   const [quizQuestions] = useState(() => getRandomQuestions(learnLang, level, 10));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -42,6 +44,10 @@ export function Quiz({ level, learnLang, onComplete, onBack }: QuizProps) {
     }
   }, [selectedAnswer, current, currentIndex, answers, quizQuestions, onComplete]);
 
+  const handleSpeak = (text: string) => {
+    speak(text, learnLang);
+  };
+
   return (
     <div className="quiz-screen" dir="auto">
       <div className="quiz-top-bar">
@@ -54,7 +60,10 @@ export function Quiz({ level, learnLang, onComplete, onBack }: QuizProps) {
 
       <div className="quiz-card" key={current.id}>
         <div className="question-category">{current.category}</div>
-        <p className="question-text">{current.question}</p>
+        <div className="question-row">
+          <p className="question-text">{current.question}</p>
+          <button className="speak-btn-small" onClick={() => handleSpeak(current.question)} title="Listen">🔊</button>
+        </div>
 
         <div className="options-grid">
           {current.options?.map((opt) => {
@@ -71,7 +80,8 @@ export function Quiz({ level, learnLang, onComplete, onBack }: QuizProps) {
                 onClick={() => handleSelect(opt)}
                 disabled={isAnswered}
               >
-                {opt}
+                <span className="option-text">{opt}</span>
+                <span className="option-speak" onClick={(e) => { e.stopPropagation(); handleSpeak(opt); }} title="Listen">🔊</span>
                 {isAnswered && opt === current.correctAnswer && <span className="check-mark">✓</span>}
                 {isAnswered && opt === selectedAnswer && opt !== current.correctAnswer && <span className="x-mark">✗</span>}
               </button>
