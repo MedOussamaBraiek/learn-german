@@ -3,7 +3,7 @@ import type { Language } from '../types';
 export type TranslationKey = keyof typeof en;
 
 export const en = {
-  'app.title': 'GermanLern',
+  'app.title': 'Learn Languages',
   'app.subtitle': 'Choose your level',
   'level.beginner': 'Beginner',
   'level.elementary': 'Elementary',
@@ -45,7 +45,7 @@ export const en = {
 };
 
 export const ar: Record<TranslationKey, string> = {
-  'app.title': 'GermanLern',
+  'app.title': 'Learn Languages',
   'app.subtitle': 'اختر مستواك',
   'level.beginner': 'مبتدئ',
   'level.elementary': 'أساسي',
@@ -87,7 +87,7 @@ export const ar: Record<TranslationKey, string> = {
 };
 
 export const fr: Record<TranslationKey, string> = {
-  'app.title': 'GermanLern',
+  'app.title': 'Learn Languages',
   'app.subtitle': 'Choisissez votre niveau',
   'level.beginner': 'Débutant',
   'level.elementary': 'Élémentaire',
@@ -129,7 +129,7 @@ export const fr: Record<TranslationKey, string> = {
 };
 
 export const de: Record<TranslationKey, string> = {
-  'app.title': 'GermanLern',
+  'app.title': 'Learn Languages',
   'app.subtitle': 'Wähle dein Level',
   'level.beginner': 'Anfänger',
   'level.elementary': 'Grundstufe',
