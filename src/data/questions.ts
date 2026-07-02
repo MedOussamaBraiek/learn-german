@@ -1,4 +1,7 @@
-import type { Question, LevelInfo, Level } from '../types';
+import type { Question, LevelInfo, Level, LearnLanguage } from '../types';
+import { generateQuestions } from './generators';
+export { learnLangs } from './vocabulary';
+export { generateQuestions } from './generators';
 
 export const levels: LevelInfo[] = [
   { label: 'A1', name: 'Beginner', description: 'Basic greetings, articles, simple sentences', color: '#58cc02' },
@@ -7,8 +10,8 @@ export const levels: LevelInfo[] = [
   { label: 'B2', name: 'Upper Intermediate', description: 'Complex tenses, nuanced expressions', color: '#ce82ff' },
 ];
 
-export const questions: Record<string, Question[]> = {
-  A1: [
+const staticQuestions: Record<string, Question[]> = {
+  de: [
     { id: 1, type: 'multiple-choice', question: 'Was ist der richtige Artikel? ___ Hund', options: ['Der', 'Die', 'Das', 'Den'], correctAnswer: 'Der', explanation: '"Hund" is masculine, so the correct article is "der".', category: 'Articles' },
     { id: 2, type: 'multiple-choice', question: 'How do you say "Good morning" in German?', options: ['Gute Nacht', 'Guten Morgen', 'Guten Abend', 'Hallo'], correctAnswer: 'Guten Morgen', explanation: '"Guten Morgen" is used in the morning until about noon.', category: 'Greetings' },
     { id: 3, type: 'fill-blank', question: 'Ich ___ (to be) ein Student.', options: ['bin', 'bist', 'ist', 'sind'], correctAnswer: 'bin', explanation: '"Ich" takes the verb form "bin" (sein conjugation: ich bin).', category: 'Verbs' },
@@ -45,123 +48,21 @@ export const questions: Record<string, Question[]> = {
     { id: 34, type: 'multiple-choice', question: 'Which is the German word for "please"?', options: ['Danke', 'Bitte', 'Tschüss', 'Hallo'], correctAnswer: 'Bitte', explanation: '"Bitte" means please.', category: 'Vocabulary' },
     { id: 35, type: 'multiple-choice', question: 'Was ist der richtige Artikel? ___ Buch', options: ['Der', 'Die', 'Das', 'Den'], correctAnswer: 'Das', explanation: '"Buch" is neuter, so the correct article is "das".', category: 'Articles' },
   ],
-  A2: [
-    { id: 1, type: 'multiple-choice', question: 'Ich ___ gestern ins Kino gegangen.', options: ['bin', 'hast', 'habe', 'ist'], correctAnswer: 'bin', explanation: 'Perfekt with "gehen" uses "sein" as auxiliary: ich bin gegangen.', category: 'Past Tense' },
-    { id: 2, type: 'multiple-choice', question: '___ du morgen kommen? (Can you come tomorrow?)', options: ['Musst', 'Kannst', 'Willst', 'Darfst'], correctAnswer: 'Kannst', explanation: '"Können" (can) is the correct modal verb for ability.', category: 'Modal Verbs' },
-    { id: 3, type: 'fill-blank', question: 'Er ___ (to live) in Berlin.', options: ['wohne', 'wohnst', 'wohnt', 'wohnen'], correctAnswer: 'wohnt', explanation: 'Third person singular of "wohnen" is "wohnt".', category: 'Verbs' },
-    { id: 4, type: 'multiple-choice', question: 'Which preposition is correct? "Ich warte ___ den Bus."', options: ['für', 'auf', 'an', 'bei'], correctAnswer: 'auf', explanation: '"Warten auf" means "to wait for" in German.', category: 'Prepositions' },
-    { id: 5, type: 'multiple-choice', question: 'Der Film war langweilig. What does "langweilig" mean?', options: ['Interesting', 'Boring', 'Long', 'Exciting'], correctAnswer: 'Boring', explanation: '"Langweilig" means boring; "interessant" means interesting.', category: 'Vocabulary' },
-    { id: 6, type: 'fill-blank', question: 'Ich möchte ___ Wasser, bitte. (a little)', options: ['ein', 'etwas', 'viel', 'kein'], correctAnswer: 'etwas', explanation: '"Etwas" means "a little" or "some".', category: 'Vocabulary' },
-    { id: 7, type: 'multiple-choice', question: '___ du gestern deine Hausaufgaben? (Did you do...)', options: ['Machst', 'Hast gemacht', 'Hast machen', 'Hast gemachen'], correctAnswer: 'Hast gemacht', explanation: 'Perfekt: "haben" + ge- + stem + -t → "hast gemacht".', category: 'Past Tense' },
-    { id: 8, type: 'multiple-choice', question: 'Which word is a fruit?', options: ['Brot', 'Apfel', 'Fleisch', 'Milch'], correctAnswer: 'Apfel', explanation: 'Apfel = apple (fruit), Brot = bread, Fleisch = meat, Milch = milk.', category: 'Vocabulary' },
-    { id: 9, type: 'multiple-choice', question: 'Mein Bruder ist älter ___ ich.', options: ['dann', 'als', 'wie', 'denn'], correctAnswer: 'als', explanation: '"Als" is used for comparisons of inequality (älter als).', category: 'Grammar' },
-    { id: 10, type: 'fill-blank', question: 'Wir ___ (to play) Fußball.', options: ['spiele', 'spielst', 'spielt', 'spielen'], correctAnswer: 'spielen', explanation: 'First person plural of "spielen" is "spielen".', category: 'Verbs' },
-    { id: 11, type: 'multiple-choice', question: 'Ich ___ gestern ein Buch gelesen.', options: ['bin', 'hast', 'habe', 'hat'], correctAnswer: 'habe', explanation: 'Perfekt with "lesen" uses "haben": ich habe gelesen.', category: 'Past Tense' },
-    { id: 12, type: 'multiple-choice', question: '___ du mir helfen? (Can you help me?)', options: ['Must', 'Kannst', 'Magst', 'Darfst'], correctAnswer: 'Kannst', explanation: '"Können" expresses ability: "Kannst du mir helfen?".', category: 'Modal Verbs' },
-    { id: 13, type: 'multiple-choice', question: 'Ich interessiere mich ___ Musik.', options: ['für', 'auf', 'an', 'über'], correctAnswer: 'für', explanation: '"Sich interessieren für" = to be interested in.', category: 'Prepositions' },
-    { id: 14, type: 'multiple-choice', question: 'Er hat seine Schlüssel ___. (lost)', options: ['verlieren', 'verloren', 'verliert', 'verlierte'], correctAnswer: 'verloren', explanation: 'Verlieren → verloren (strong verb Perfekt).', category: 'Past Tense' },
-    { id: 15, type: 'fill-blank', question: 'Ich ___ morgen nicht arbeiten. (don\'t have to)', options: ['muss', 'kann', 'darf', 'soll'], correctAnswer: 'muss', explanation: 'Wait — "nicht müssen" means "don\'t have to". Actually "muss nicht" = don\'t have to.', category: 'Modal Verbs' },
-    { id: 16, type: 'multiple-choice', question: 'Which dative preposition? "Ich komme ___ dir."', options: ['für', 'gegen', 'mit', 'durch'], correctAnswer: 'mit', explanation: '"Mit" always takes dative: "mit dir".', category: 'Prepositions' },
-    { id: 17, type: 'multiple-choice', question: 'Was bedeutet "das Frühstück"?', options: ['Lunch', 'Dinner', 'Breakfast', 'Snack'], correctAnswer: 'Breakfast', explanation: '"Das Frühstück" means breakfast.', category: 'Vocabulary' },
-    { id: 18, type: 'multiple-choice', question: '___ du heute Abend frei? (Are you free tonight?)', options: ['Hast', 'Bist', 'Kannst', 'Wirst'], correctAnswer: 'Hast', explanation: '"Hast du frei?" = "Are you free?" (literally: have you free).', category: 'Vocabulary' },
-    { id: 19, type: 'fill-blank', question: 'Sie ___ (to go) jeden Tag spazieren.', options: ['gehe', 'gehst', 'geht', 'gehen'], correctAnswer: 'geht', explanation: 'Third person singular of "gehen" is "geht".', category: 'Verbs' },
-    { id: 20, type: 'multiple-choice', question: 'Der Zug ___ um 8 Uhr an. (arrives)', options: ['kommt', 'fährt', 'geht', 'steigt'], correctAnswer: 'kommt', explanation: '"Ankommen" means to arrive: "kommt ... an".', category: 'Vocabulary' },
-    { id: 21, type: 'multiple-choice', question: 'Which accusative preposition? "Ich gehe ___ den Park."', options: ['aus', 'bei', 'mit', 'durch'], correctAnswer: 'durch', explanation: '"Durch" always takes accusative: "durch den Park".', category: 'Prepositions' },
-    { id: 22, type: 'multiple-choice', question: 'Mein Auto ist schneller ___ deins.', options: ['dann', 'als', 'wie', 'denn'], correctAnswer: 'als', explanation: '"Als" is used for comparisons: "schneller als".', category: 'Grammar' },
-    { id: 23, type: 'multiple-choice', question: 'Ich habe mich ___ dich gefreut.', options: ['für', 'auf', 'über', 'an'], correctAnswer: 'über', explanation: '"Sich freuen über" = to be glad about (something that happened).', category: 'Prepositions' },
-    { id: 24, type: 'multiple-choice', question: 'Was bedeutet "der Bahnhof"?', options: ['The airport', 'The train station', 'The bus stop', 'The harbor'], correctAnswer: 'The train station', explanation: '"Der Bahnhof" means the train station.', category: 'Vocabulary' },
-    { id: 25, type: 'fill-blank', question: 'Ihr ___ (to come) aus Deutschland.', options: ['komme', 'kommst', 'kommt', 'kommen'], correctAnswer: 'kommt', explanation: '"Ihr" takes "kommt" (ihr kommt).', category: 'Verbs' },
-    { id: 26, type: 'multiple-choice', question: 'Ich muss ___ Arzt gehen.', options: ['zum', 'zur', 'ins', 'ans'], correctAnswer: 'zum', explanation: '"Zum Arzt" = zu + dem Arzt (masculine).', category: 'Prepositions' },
-    { id: 27, type: 'multiple-choice', question: 'Kann ich Ihnen ___? (help)', options: ['hilfe', 'helfen', 'hilft', 'half'], correctAnswer: 'helfen', explanation: '"Kann ich Ihnen helfen?" = "Can I help you?" (formal).', category: 'Modal Verbs' },
-    { id: 28, type: 'multiple-choice', question: 'Es ___ gestern geregnet.', options: ['ist', 'hat', 'wurde', 'war'], correctAnswer: 'hat', explanation: '"Regnen" uses "haben" in Perfekt: "es hat geregnet".', category: 'Past Tense' },
-    { id: 29, type: 'multiple-choice', question: 'Die Kinder ___ fernsehen. (want to)', options: ['müssen', 'wollen', 'dürfen', 'sollen'], correctAnswer: 'wollen', explanation: '"Wollen" expresses a wish or intention: "sie wollen fernsehen".', category: 'Modal Verbs' },
-    { id: 30, type: 'fill-blank', question: '___ du gestern im Kino? (Were you)', options: ['Warst', 'Wart', 'Waren', 'War'], correctAnswer: 'Warst', explanation: 'Präteritum of "sein": du warst.', category: 'Past Tense' },
-    { id: 31, type: 'multiple-choice', question: 'Das ist ___ teuer. (too)', options: ['sehr', 'zu', 'auch', 'nur'], correctAnswer: 'zu', explanation: '"Zu" before an adjective means "too" (zu teuer = too expensive).', category: 'Vocabulary' },
-    { id: 32, type: 'multiple-choice', question: 'Gib mir ___ Buch! (the — accusative)', options: ['der', 'die', 'das', 'dem'], correctAnswer: 'das', explanation: '"Das Buch" in accusative stays "das Buch".', category: 'Articles' },
-    { id: 33, type: 'multiple-choice', question: 'Sie wäscht ___ die Hände. (herself)', options: ['ihr', 'sich', 'sie', 'ihre'], correctAnswer: 'sich', explanation: '"Sich waschen" is a reflexive verb: "sie wäscht sich".', category: 'Verbs' },
-    { id: 34, type: 'multiple-choice', question: 'Was bedeutet "leider"?', options: ['Luckily', 'Unfortunately', 'Hopefully', 'Surely'], correctAnswer: 'Unfortunately', explanation: '"Leider" means unfortunately.', category: 'Vocabulary' },
-    { id: 35, type: 'multiple-choice', question: 'Ich bin ___ Frankfurt gefahren.', options: ['in', 'nach', 'zu', 'bei'], correctAnswer: 'nach', explanation: '"Nach" is used for cities and countries without article: "nach Frankfurt".', category: 'Prepositions' },
-  ],
-  B1: [
-    { id: 1, type: 'multiple-choice', question: 'Wenn ich mehr Zeit ___, würde ich verreisen.', options: ['habe', 'hätte', 'hatte', 'haben würde'], correctAnswer: 'hätte', explanation: 'Konjunktiv II: "wenn ... hätte, würde ..." for hypothetical situations.', category: 'Konjunktiv II' },
-    { id: 2, type: 'multiple-choice', question: 'Das Haus ___ (to be built) im Jahr 1900.', options: ['baute', 'wurde gebaut', 'hat gebaut', 'wird gebaut'], correctAnswer: 'wurde gebaut', explanation: 'Passive voice in Präteritum: "wurde + ge- + -t".', category: 'Passive Voice' },
-    { id: 3, type: 'multiple-choice', question: 'Der Mann, ___ dir geholfen hat, ist mein Vater.', options: ['der', 'den', 'dem', 'dessen'], correctAnswer: 'der', explanation: 'Relative pronoun in nominative: "der Mann, der ..."', category: 'Relative Clauses' },
-    { id: 4, type: 'fill-blank', question: 'Das ist ein ___ (expensive) Auto.', options: ['teuren', 'teurer', 'teures', 'teure'], correctAnswer: 'teures', explanation: 'Adjective declension after "ein" with neuter noun: ein teures Auto.', category: 'Adjective Endings' },
-    { id: 5, type: 'multiple-choice', question: 'Ich freue mich ___ das Geschenk.', options: ['für', 'auf', 'über', 'an'], correctAnswer: 'über', explanation: '"Sich freuen über" = to be happy about something (past/current).', category: 'Prepositions' },
-    { id: 6, type: 'multiple-choice', question: 'Was bedeutet "trotzdem"?', options: ['Because', 'Although', 'Nevertheless', 'Therefore'], correctAnswer: 'Nevertheless', explanation: '"Trotzdem" means nevertheless or despite that.', category: 'Vocabulary' },
-    { id: 7, type: 'multiple-choice', question: 'Er sagte, er ___ müde.', options: ['ist', 'sei', 'wäre', 'war'], correctAnswer: 'sei', explanation: 'Indirect speech in German uses Konjunktiv I: "er sagte, er sei müde".', category: 'Indirect Speech' },
-    { id: 8, type: 'fill-blank', question: 'Ich bin ___ (to drive) nach Hause ___.', options: ['gefahren', 'gegangen', 'gereist', 'geflogen'], correctAnswer: 'gefahren', explanation: '"Fahren" → "gefahren" (Perfekt with sein).', category: 'Past Tense' },
-    { id: 9, type: 'multiple-choice', question: 'Je mehr du übst, ___ besser wirst du.', options: ['desto', 'dann', 'als', 'wie'], correctAnswer: 'desto', explanation: '"Je ... desto ..." = "the more ... the better ..."', category: 'Grammar' },
-    { id: 10, type: 'multiple-choice', question: 'Which sentence is correct in Konjunktiv II?', options: ['Ich würde gerne fliegen können', 'Ich will fliegen können würde', 'Ich könnte fliegen wollen würde', 'Ich würde fliegen können wollen'], correctAnswer: 'Ich würde gerne fliegen können', explanation: '"Würde + infinitive" at the end of the clause.', category: 'Konjunktiv II' },
-    { id: 11, type: 'multiple-choice', question: 'Wenn ich reich ___, würde ich ein Haus kaufen.', options: ['bin', 'war', 'wäre', 'sei'], correctAnswer: 'wäre', explanation: 'Konjunktiv II of "sein": "ich wäre" (I would be).', category: 'Konjunktiv II' },
-    { id: 12, type: 'multiple-choice', question: 'Der Brief ___ gestern geschrieben.', options: ['wurde', 'ist', 'hat', 'war'], correctAnswer: 'wurde', explanation: 'Passive Präteritum: "wurde geschrieben" = was written.', category: 'Passive Voice' },
-    { id: 13, type: 'multiple-choice', question: 'Das Kind, ___ Spielzeug kaputt ist, weint.', options: ['der', 'den', 'dessen', 'dem'], correctAnswer: 'dessen', explanation: 'Genitive relative pronoun: "dessen" = whose.', category: 'Relative Clauses' },
-    { id: 14, type: 'fill-blank', question: 'Sie hat ein ___ (beautiful) Kleid gekauft.', options: ['schönen', 'schöner', 'schönes', 'schöne'], correctAnswer: 'schönes', explanation: 'After "ein" with neuter: ein schönes Kleid.', category: 'Adjective Endings' },
-    { id: 15, type: 'multiple-choice', question: 'Er denkt ___ die Zukunft.', options: ['an', 'auf', 'über', 'für'], correctAnswer: 'an', explanation: '"Denken an" = to think about.', category: 'Prepositions' },
-    { id: 16, type: 'multiple-choice', question: 'Sie sagte, sie ___ ihn nicht. (know — Konjunktiv I)', options: ['kennt', 'kenne', 'kennen', 'kannte'], correctAnswer: 'kenne', explanation: 'Konjunktiv I of "kennen": "sie kenne" for indirect speech.', category: 'Indirect Speech' },
-    { id: 17, type: 'multiple-choice', question: 'Die Suppe wird ___ gekocht. (by the chef)', options: ['vom Koch', 'vom Koch', 'von dem Koch', 'für den Koch'], correctAnswer: 'vom Koch', explanation: 'Passive agent: "von + dative" → "vom Koch".', category: 'Passive Voice' },
-    { id: 18, type: 'multiple-choice', question: 'Er arbeitet, ___ er Geld verdienen muss.', options: ['weil', 'denn', 'dass', 'obwohl'], correctAnswer: 'weil', explanation: '"Weil" introduces a subordinate clause: "weil er ... muss".', category: 'Sentence Structure' },
-    { id: 19, type: 'fill-blank', question: '___ (in spite of) des Regens gingen wir spazieren.', options: ['Wegen', 'Trotz', 'Ohne', 'Durch'], correctAnswer: 'Trotz', explanation: '"Trotz" + Genitiv means "in spite of".', category: 'Prepositions' },
-    { id: 20, type: 'multiple-choice', question: 'Die Frau, ___ ich das Buch gab, ist meine Tante.', options: ['die', 'der', 'dem', 'den'], correctAnswer: 'der', explanation: 'Relative pronoun in dative: "der Frau, der ich ... gab".', category: 'Relative Clauses' },
-    { id: 21, type: 'multiple-choice', question: 'Was bedeutet "die Veranstaltung"?', options: ['The advertisement', 'The event', 'The contract', 'The meeting'], correctAnswer: 'The event', explanation: '"Die Veranstaltung" means the event or function.', category: 'Vocabulary' },
-    { id: 22, type: 'multiple-choice', question: 'Ich würde mitkommen, wenn ich Zeit ___.', options: ['habe', 'hätte', 'hatte', 'haben würde'], correctAnswer: 'hätte', explanation: 'Konjunktiv II in the "wenn" clause: "wenn ich Zeit hätte".', category: 'Konjunktiv II' },
-    { id: 23, type: 'fill-blank', question: 'Das ist der ___ (new) Computer.', options: ['neuen', 'neuer', 'neues', 'neue'], correctAnswer: 'neue', explanation: 'After definite article "der": der neue Computer (weak declension).', category: 'Adjective Endings' },
-    { id: 24, type: 'multiple-choice', question: 'Er spricht Deutsch, ___ er aus Spanien kommt.', options: ['weil', 'obwohl', 'dass', 'denn'], correctAnswer: 'obwohl', explanation: '"Obwohl" = although. It introduces a contrast.', category: 'Sentence Structure' },
-    { id: 25, type: 'multiple-choice', question: 'Die Prüfung ___ von den Studenten ___ (was taken).', options: ['wurde ... genommen', 'hat ... genommen', 'ist ... genommen', 'war ... genommen'], correctAnswer: 'wurde ... genommen', explanation: 'Passive Präteritum: "wurde genommen".', category: 'Passive Voice' },
-    { id: 26, type: 'multiple-choice', question: 'Ohne Brille ___ ich nichts sehen.', options: ['kann', 'könnte', 'konnte', 'kannst'], correctAnswer: 'könnte', explanation: 'Konjunktiv II: "könnte" = would be able to (hypothetical).', category: 'Konjunktiv II' },
-    { id: 27, type: 'multiple-choice', question: 'Ich bin mir nicht sicher, ___ er kommt.', options: ['ob', 'dass', 'wenn', 'weil'], correctAnswer: 'ob', explanation: '"Ob" = whether. Used for indirect yes/no questions.', category: 'Sentence Structure' },
-    { id: 28, type: 'fill-blank', question: 'Er hat mir ___ (to explain) die Regeln ___.', options: ['erklärt', 'erklären', 'erklärte', 'erklärt'], correctAnswer: 'erklärt', explanation: 'Perfekt: "hat ... erklärt" (regular verb).', category: 'Past Tense' },
-    { id: 29, type: 'multiple-choice', question: 'Was bedeutet "allerdings"?', options: ['Always', 'However', 'Absolutely', 'Almost'], correctAnswer: 'However', explanation: '"Allerdings" means however or admittedly.', category: 'Vocabulary' },
-    { id: 30, type: 'multiple-choice', question: 'Die Studentin, ___ Fahrrad gestohlen wurde, ist verzweifelt.', options: ['der', 'die', 'denen', 'deren'], correctAnswer: 'deren', explanation: 'Genitive relative pronoun: "deren" = whose (feminine singular).', category: 'Relative Clauses' },
-    { id: 31, type: 'multiple-choice', question: 'Er tut so, als ___ er nichts.', options: ['weiß', 'wüsste', 'wusste', 'wisse'], correctAnswer: 'wüsste', explanation: '"Als ob" + Konjunktiv II: "als wüsste er nichts" = as if he knew nothing.', category: 'Konjunktiv II' },
-    { id: 32, type: 'multiple-choice', question: 'Sie hat ein ___ (big) Haus ___ (built).', options: ['großes ... gebaut', 'großen ... gebaut', 'große ... bauen', 'großes ... bauen'], correctAnswer: 'großes ... gebaut', explanation: 'Ein großes Haus + Perfekt: "hat gebaut".', category: 'Adjective Endings' },
-    { id: 33, type: 'multiple-choice', question: 'Der Film, ___ wir gesehen haben, war super.', options: ['der', 'den', 'dem', 'dessen'], correctAnswer: 'den', explanation: 'Relative pronoun in accusative: "den Film, den wir gesehen haben".', category: 'Relative Clauses' },
-    { id: 34, type: 'multiple-choice', question: 'Ich freue mich ___ deinen Besuch.', options: ['für', 'auf', 'über', 'an'], correctAnswer: 'auf', explanation: '"Sich freuen auf" = to look forward to (future).', category: 'Prepositions' },
-    { id: 35, type: 'fill-blank', question: 'Es ___ (to be — Konjunktiv II) schön, wenn du kämst.', options: ['ist', 'wäre', 'sei', 'war'], correctAnswer: 'wäre', explanation: '"Es wäre" = it would be (Konjunktiv II).', category: 'Konjunktiv II' },
-  ],
-  B2: [
-    { id: 1, type: 'multiple-choice', question: '___ er sich besser vorbereitet hätte, hätte er bestanden.', options: ['Wenn', 'Falls', 'Hätte', 'Ob'], correctAnswer: 'Hätte', explanation: 'Conditional without "wenn": "Hätte er ... hätte er ..." (inversion).', category: 'Conditional Sentences' },
-    { id: 2, type: 'multiple-choice', question: 'Der Vertrag ___ (must be signed) vom Chef.', options: ['muss unterschreiben', 'muss unterschrieben werden', 'wird unterschreiben müssen', 'hat unterschreiben müssen'], correctAnswer: 'muss unterschrieben werden', explanation: 'Modal verb + passive: "muss + ge- + -t + werden".', category: 'Passive with Modals' },
-    { id: 3, type: 'multiple-choice', question: 'Es ___ (is said) dass er im Ausland lebt.', options: ['sagt', 'wird gesagt', 'hat gesagt', 'ist gesagt'], correctAnswer: 'wird gesagt', explanation: 'Unpersönliches Passiv: "es wird gesagt" = it is said.', category: 'Impersonal Passive' },
-    { id: 4, type: 'multiple-choice', question: 'Die Frau, ___ ich gestern traf, war sehr nett.', options: ['die', 'deren', 'der', 'die ich'], correctAnswer: 'die', explanation: 'Relative pronoun in accusative: "die Frau, die ich traf".', category: 'Relative Clauses' },
-    { id: 5, type: 'fill-blank', question: 'Er tat so, als ___ er nichts gewusst. (as if he knew nothing)', options: ['hätte', 'hat', 'hätte', 'habe'], correctAnswer: 'hätte', explanation: '"Als ob" + Konjunktiv II for unreal comparisons.', category: 'Konjunktiv II' },
-    { id: 6, type: 'multiple-choice', question: 'What does "sich bewerben um" mean?', options: ['To apply for', 'To complain about', 'To move around', 'To prove oneself'], correctAnswer: 'To apply for', explanation: '"Sich bewerben um" = to apply for a position.', category: 'Vocabulary' },
-    { id: 7, type: 'multiple-choice', question: 'Nachdem er gegessen ___, ging er spazieren.', options: ['hatte', 'hat', 'haben würde', 'hätte'], correctAnswer: 'hatte', explanation: 'Plusquamperfekt for action before another past action: "nachdem ... gegessen hatte".', category: 'Tenses' },
-    { id: 8, type: 'multiple-choice', question: 'Ich möchte, dass du ___ (come).', options: ['kommst', 'kommen', 'kämest', 'gekommen'], correctAnswer: 'kommst', explanation: '"Dass" clause with conjugated verb at the end: "dass du kommst".', category: 'Subordinate Clauses' },
-    { id: 9, type: 'fill-blank', question: '___ (because of) des Regens blieben wir zu Hause.', options: ['Wegen', 'Durch', 'Für', 'Mit'], correctAnswer: 'Wegen', explanation: '"Wegen" + Genitiv means "because of".', category: 'Prepositions' },
-    { id: 10, type: 'multiple-choice', question: 'Which sentence uses "um ... zu" correctly?', options: ['Ich lerne Deutsch, um in Berlin zu arbeiten', 'Ich lerne Deutsch, um in Berlin arbeiten', 'Ich lerne Deutsch, um zu arbeiten in Berlin', 'Ich lerne Deutsch, um arbeiten in Berlin zu'], correctAnswer: 'Ich lerne Deutsch, um in Berlin zu arbeiten', explanation: '"Um ... zu" + infinitive at the end: "um ... zu arbeiten".', category: 'Sentence Structure' },
-    { id: 11, type: 'multiple-choice', question: 'Hätte ich mehr Zeit gehabt, ___ ich verreist.', options: ['bin', 'hätte', 'wäre', 'würde'], correctAnswer: 'wäre', explanation: 'Conditional perfect: "wäre ... verreist" (with sein verb).', category: 'Conditional Sentences' },
-    { id: 12, type: 'multiple-choice', question: 'Das muss ___ (must be considered) werden.', options: ['berücksichtigen', 'berücksichtigt', 'berücksichtigt werden', 'berücksichtigt geworden'], correctAnswer: 'berücksichtigt werden', explanation: 'Modal + passive: "muss berücksichtigt werden".', category: 'Passive with Modals' },
-    { id: 13, type: 'multiple-choice', question: 'Hier ___ (is being built) ein neues Krankenhaus.', options: ['baut', 'wird gebaut', 'hat gebaut', 'ist gebaut'], correctAnswer: 'wird gebaut', explanation: 'Passive Präsens: "wird gebaut" = is being built.', category: 'Passive Voice' },
-    { id: 14, type: 'multiple-choice', question: 'Die Leute, mit ___ ich arbeite, sind toll.', options: ['die', 'denen', 'der', 'dessen'], correctAnswer: 'denen', explanation: 'Relative pronoun in dative (plural): "mit denen".', category: 'Relative Clauses' },
-    { id: 15, type: 'multiple-choice', question: 'Er benimmt sich, als ___ er der Chef.', options: ['ist', 'sei', 'wäre', 'wird'], correctAnswer: 'wäre', explanation: '"Als ob" + Konjunktiv II: "als wäre er der Chef".', category: 'Konjunktiv II' },
-    { id: 16, type: 'multiple-choice', question: 'Was bedeutet "die Voraussetzung"?', options: ['The condition/precondition', 'The advantage', 'The summary', 'The consequence'], correctAnswer: 'The condition/precondition', explanation: '"Die Voraussetzung" means the prerequisite or precondition.', category: 'Vocabulary' },
-    { id: 17, type: 'multiple-choice', question: 'Bevor er die Prüfung schrieb, ___ er viel gelernt.', options: ['hat', 'hatte', 'hätte', 'habe'], correctAnswer: 'hatte', explanation: 'Plusquamperfekt: "hatte gelernt" (action before "schrieb").', category: 'Tenses' },
-    { id: 18, type: 'fill-blank', question: 'Es ist wichtig, dass du ___ (to arrive) pünktlich ___.', options: ['ankommst', 'ankommen', 'angekommen', 'ankämest'], correctAnswer: 'ankommst', explanation: '"Dass" clause with separable verb: "dass du ... ankommst".', category: 'Subordinate Clauses' },
-    { id: 19, type: 'multiple-choice', question: '___ der Wirtschaftskrise verlor er seinen Job.', options: ['Wegen', 'Trotz', 'Aufgrund', 'Während'], correctAnswer: 'Aufgrund', explanation: '"Aufgrund" + Genitiv = due to (formal).', category: 'Prepositions' },
-    { id: 20, type: 'multiple-choice', question: 'Sie spricht, ___ sie alles wüsste.', options: ['als', 'als ob', 'wie', 'dass'], correctAnswer: 'als ob', explanation: '"Als ob" introduces an unreal comparison with Konjunktiv II.', category: 'Konjunktiv II' },
-    { id: 21, type: 'multiple-choice', question: 'Das könnte ___ (could be improved) werden.', options: ['verbessern', 'verbessert werden', 'verbesserte', 'verbessern lassen'], correctAnswer: 'verbessert werden', explanation: 'Modal + passive infinitive: "könnte verbessert werden".', category: 'Passive with Modals' },
-    { id: 22, type: 'multiple-choice', question: 'Der Vorschlag, ___ du gemacht hast, ist gut.', options: ['der', 'den', 'dem', 'dessen'], correctAnswer: 'den', explanation: 'Relative pronoun in accusative: "den Vorschlag, den du gemacht hast".', category: 'Relative Clauses' },
-    { id: 23, type: 'fill-blank', question: 'Ich wünschte, ich ___ (can — Konjunktiv II) fliegen.', options: ['kann', 'konnte', 'könnte', 'könne'], correctAnswer: 'könnte', explanation: '"Ich wünschte" triggers Konjunktiv II: "ich könnte".', category: 'Konjunktiv II' },
-    { id: 24, type: 'multiple-choice', question: 'Man ___ pünktlich sein. (one should)', options: ['muss', 'soll', 'darf', 'kann'], correctAnswer: 'soll', explanation: '"Man soll" = one should (general advice).', category: 'Modal Verbs' },
-    { id: 25, type: 'multiple-choice', question: 'Nachdem sie angekommen ___, meldete sie sich.', options: ['ist', 'war', 'hat', 'wurde'], correctAnswer: 'war', explanation: 'Plusquamperfekt: "angekommen war" (with sein).', category: 'Tenses' },
-    { id: 26, type: 'multiple-choice', question: 'Was bedeutet "die Hinsicht"?', options: ['The insight', 'The respect/aspect', 'The hindsight', 'The foresight'], correctAnswer: 'The respect/aspect', explanation: '"In dieser Hinsicht" = in this respect.', category: 'Vocabulary' },
-    { id: 27, type: 'multiple-choice', question: 'Der Arzt sagte, der Patient ___ (has — Konjunktiv I) keine Schmerzen.', options: ['hat', 'habe', 'hätte', 'hatte'], correctAnswer: 'habe', explanation: 'Indirect speech: Konjunktiv I "habe" for reported speech.', category: 'Indirect Speech' },
-    { id: 28, type: 'multiple-choice', question: 'Sollte er doch kommen, ___ ich überrascht.', options: ['bin', 'wäre', 'sei', 'würde'], correctAnswer: 'wäre', explanation: 'Future conditional: "Sollte ... wäre" = "Should ... I would be".', category: 'Conditional Sentences' },
-    { id: 29, type: 'multiple-choice', question: 'Die Aufgabe ist ___ (to be solved) ___.', options: ['zu lösen', 'gelöst', 'lösen zu', 'zu gelöst'], correctAnswer: 'zu lösen', explanation: '"Zu" + infinitive passive: "ist zu lösen" = can/must be solved.', category: 'Sentence Structure' },
-    { id: 30, type: 'multiple-choice', question: 'Er arbeitet bei einer Firma, ___ Hauptsitz in München ist.', options: ['die', 'deren', 'der', 'dessen'], correctAnswer: 'deren', explanation: 'Genitive relative: "deren Hauptsitz" = whose headquarters (feminine).', category: 'Relative Clauses' },
-    { id: 31, type: 'multiple-choice', question: 'Hätte ich das gewusst, ___ ich anders gehandelt.', options: ['hätte', 'wäre', 'habe', 'würde'], correctAnswer: 'hätte', explanation: 'Conditional perfect: "hätte ... gehandelt".', category: 'Conditional Sentences' },
-    { id: 32, type: 'multiple-choice', question: 'Es wurde darüber diskutiert, ___ man das Problem lösen kann.', options: ['ob', 'dass', 'wie', 'wenn'], correctAnswer: 'wie', explanation: '"Wie" introduces an indirect question: "darüber diskutiert, wie ...".', category: 'Subordinate Clauses' },
-    { id: 33, type: 'fill-blank', question: 'Ich bin es leid, immer ___ (to wait) ___.', options: ['warten', 'zu warten', 'gewartet', 'wartend'], correctAnswer: 'zu warten', explanation: '"Es leid sein, zu ..." = to be tired of ...ing.', category: 'Sentence Structure' },
-    { id: 34, type: 'multiple-choice', question: 'Bei Regen ___ die Veranstaltung abgesagt.', options: ['wird', 'würde', 'hat', 'ist'], correctAnswer: 'wird', explanation: 'Present passive: "wird abgesagt" = is cancelled.', category: 'Passive Voice' },
-    { id: 35, type: 'multiple-choice', question: 'Der Professor, ___ Vorlesungen immer voll sind, ist sehr beliebt.', options: ['der', 'den', 'dessen', 'dem'], correctAnswer: 'dessen', explanation: 'Genitive relative: "dessen Vorlesungen" = whose lectures.', category: 'Relative Clauses' },
-  ],
 };
 
-export function getRandomQuestions(level: Level, count: number = 10): Question[] {
-  const levelQuestions = questions[level];
-  const shuffled = [...levelQuestions].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(count, shuffled.length));
+export function getRandomQuestions(lang: LearnLanguage, level: Level, count: number = 10): Question[] {
+  const staticQ = staticQuestions[lang] || [];
+  const shuffled = [...staticQ].sort(() => Math.random() - 0.5);
+  const staticCount = Math.min(Math.floor(count * 0.6), shuffled.length);
+  const chosen = shuffled.slice(0, staticCount);
+
+  const genCount = count - chosen.length;
+  if (genCount > 0) {
+    const generated = generateQuestions(lang, level, genCount);
+    chosen.push(...generated);
+  }
+
+  return chosen.sort(() => Math.random() - 0.5).slice(0, count);
 }
 
 export function getImprovementTips(categoryStats: Record<string, { correct: number; total: number }>): string[] {
@@ -169,7 +70,7 @@ export function getImprovementTips(categoryStats: Record<string, { correct: numb
   for (const [category, stats] of Object.entries(categoryStats)) {
     const score = stats.correct / stats.total;
     if (score < 0.5) {
-      tips.push(`Focus on **${category}** — you got ${stats.correct}/${stats.total} correct. Review the basics of ${category.toLowerCase()} in German.`);
+      tips.push(`Focus on **${category}** — you got ${stats.correct}/${stats.total} correct. Review the basics of ${category.toLowerCase()}.`);
     } else if (score < 0.8) {
       tips.push(`Keep practicing **${category}** — you got ${stats.correct}/${stats.total}. You're on the right track!`);
     }
@@ -178,4 +79,30 @@ export function getImprovementTips(categoryStats: Record<string, { correct: numb
     tips.push('Great job! You\'re doing well across all categories. Try the next level!');
   }
   return tips;
+}
+
+export function getAiAnalysis(categoryStats: Record<string, { correct: number; total: number }>): string {
+  const weak: string[] = [];
+  const strong: string[] = [];
+
+  for (const [cat, stats] of Object.entries(categoryStats)) {
+    const pct = stats.correct / stats.total;
+    if (pct < 0.5) weak.push(cat);
+    else if (pct >= 0.8) strong.push(cat);
+  }
+
+  if (weak.length === 0 && strong.length === 0) return 'Keep practicing to build your skills.';
+
+  const parts: string[] = [];
+  if (weak.length > 0) {
+    parts.push(`Weak areas: ${weak.join(', ')}. Focus on understanding the rules and practice more.`);
+  }
+  if (strong.length > 0) {
+    parts.push(`Strong areas: ${strong.join(', ')}. You're doing great here!`);
+  }
+  if (weak.length > 0 && strong.length > 0) {
+    parts.push('Try interleaving practice — mix weak and strong topics in one session.');
+  }
+
+  return parts.join(' ');
 }

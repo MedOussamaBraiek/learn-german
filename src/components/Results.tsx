@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import type { Question, Answer, Level, LevelInfo } from '../types';
-import { levels, getImprovementTips } from '../data/questions';
+import { levels, getImprovementTips, getAiAnalysis } from '../data/questions';
 import { useLang } from '../i18n/LanguageContext';
 
 interface ResultsProps {
@@ -36,6 +36,7 @@ export function Results({ questions, answers, level, onRestart, onBackToLevels }
   const { t } = useLang();
   const [showCorrections, setShowCorrections] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
+  const [showAiAnalysis, setShowAiAnalysis] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setAnimateIn(true), 100);
@@ -44,7 +45,7 @@ export function Results({ questions, answers, level, onRestart, onBackToLevels }
 
   const levelInfo = levels.find((l) => l.label === level) as LevelInfo;
 
-  const { score, categoryStats, wrongAnswers } = useMemo(() => {
+  const { score, categoryStats, wrongAnswers, aiAnalysis } = useMemo(() => {
     let score = 0;
     const categoryStats: Record<string, { correct: number; total: number }> = {};
     const wrongAnswers: { question: Question; answer: Answer }[] = [];
@@ -66,7 +67,9 @@ export function Results({ questions, answers, level, onRestart, onBackToLevels }
       }
     });
 
-    return { score, categoryStats, wrongAnswers };
+    const aiAnalysis = getAiAnalysis(categoryStats);
+
+    return { score, categoryStats, wrongAnswers, aiAnalysis };
   }, [questions, answers]);
 
   const tips = useMemo(() => getImprovementTips(categoryStats), [categoryStats]);
@@ -108,6 +111,21 @@ export function Results({ questions, answers, level, onRestart, onBackToLevels }
             </div>
           ))}
         </div>
+
+        {!showAiAnalysis && (
+          <button className="show-corrections-btn ai-btn" onClick={() => setShowAiAnalysis(true)}>
+            🤖 AI Analysis
+          </button>
+        )}
+
+        {showAiAnalysis && (
+          <div className="ai-analysis-section">
+            <h3>🤖 AI Analysis</h3>
+            <div className="ai-analysis-box">
+              <p>{aiAnalysis}</p>
+            </div>
+          </div>
+        )}
 
         {!showCorrections ? (
           <button className="show-corrections-btn" onClick={() => setShowCorrections(true)}>

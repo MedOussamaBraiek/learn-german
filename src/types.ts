@@ -1,6 +1,7 @@
 export type Level = 'A1' | 'A2' | 'B1' | 'B2';
 export type QuestionType = 'multiple-choice' | 'fill-blank';
 export type Language = 'en' | 'ar' | 'fr' | 'de';
+export type LearnLanguage = 'de' | 'fr' | 'es' | 'en' | 'ar';
 
 export interface Question {
   id: number;
@@ -23,4 +24,10 @@ export interface LevelInfo {
   name: string;
   description: string;
   color: string;
+}
+
+export interface LearnLangInfo {
+  code: LearnLanguage;
+  name: string;
+  flag: string;
 }

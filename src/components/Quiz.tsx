@@ -1,17 +1,18 @@
 import { useState, useCallback } from 'react';
-import type { Question, Answer, Level } from '../types';
+import type { Question, Answer, Level, LearnLanguage } from '../types';
 import { getRandomQuestions } from '../data/questions';
 import { useLang } from '../i18n/LanguageContext';
 
 interface QuizProps {
   level: Level;
+  learnLang: LearnLanguage;
   onComplete: (answers: Answer[], questions: Question[]) => void;
   onBack: () => void;
 }
 
-export function Quiz({ level, onComplete, onBack }: QuizProps) {
+export function Quiz({ level, learnLang, onComplete, onBack }: QuizProps) {
   const { t } = useLang();
-  const [quizQuestions] = useState(() => getRandomQuestions(level, 10));
+  const [quizQuestions] = useState(() => getRandomQuestions(learnLang, level, 10));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);

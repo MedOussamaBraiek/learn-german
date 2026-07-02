@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Level, Question, Answer } from './types';
+import type { Level, Question, Answer, LearnLanguage } from './types';
 import { LanguageProvider, useLang } from './i18n/LanguageContext';
 import { LevelSelect } from './components/LevelSelect';
 import { Quiz } from './components/Quiz';
@@ -14,6 +14,7 @@ function AppContent() {
   const { lang } = useLang();
   const [screen, setScreen] = useState<Screen>('levels');
   const [level, setLevel] = useState<Level>('A1');
+  const [learnLang, setLearnLang] = useState<LearnLanguage>('de');
   const [completedQuestions, setCompletedQuestions] = useState<Question[]>([]);
   const [completedAnswers, setCompletedAnswers] = useState<Answer[]>([]);
 
@@ -38,9 +39,11 @@ function AppContent() {
 
   return (
     <div className="app-container" dir={rtlLangs.has(lang) ? 'rtl' : 'ltr'}>
-      {screen === 'levels' && <LevelSelect onSelect={handleLevelSelect} />}
+      {screen === 'levels' && (
+        <LevelSelect onSelect={handleLevelSelect} learnLang={learnLang} onLearnLangChange={setLearnLang} />
+      )}
       {screen === 'quiz' && (
-        <Quiz level={level} onComplete={handleQuizComplete} onBack={handleBackToLevels} />
+        <Quiz level={level} learnLang={learnLang} onComplete={handleQuizComplete} onBack={handleBackToLevels} />
       )}
       {screen === 'results' && (
         <Results

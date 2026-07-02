@@ -1,10 +1,13 @@
 import { levels } from '../data/questions';
-import type { Level } from '../types';
+import type { Level, LearnLanguage } from '../types';
 import { useLang } from '../i18n/LanguageContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { LearnLangSelector } from './LearnLangSelector';
 
 interface LevelSelectProps {
   onSelect: (level: Level) => void;
+  learnLang: LearnLanguage;
+  onLearnLangChange: (lang: LearnLanguage) => void;
 }
 
 const levelNameKey: Record<string, string> = {
@@ -21,7 +24,7 @@ const levelDescKey: Record<string, string> = {
   B2: 'level.desc.b2',
 };
 
-export function LevelSelect({ onSelect }: LevelSelectProps) {
+export function LevelSelect({ onSelect, learnLang, onLearnLangChange }: LevelSelectProps) {
   const { t } = useLang();
 
   return (
@@ -32,7 +35,8 @@ export function LevelSelect({ onSelect }: LevelSelectProps) {
         <h1 className="app-title">{t('app.title')}</h1>
         <p className="app-subtitle">{t('app.subtitle')}</p>
       </div>
-      <div className="level-cards">
+      <LearnLangSelector value={learnLang} onChange={onLearnLangChange} />
+      <div className="level-cards" style={{ marginTop: 32 }}>
         {levels.map((level) => (
           <button
             key={level.label}
